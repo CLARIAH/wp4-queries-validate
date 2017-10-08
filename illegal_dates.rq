@@ -1,0 +1,19 @@
+#+ summary: Find non-existent dates like Feb 29 in a non-leap year.
+#+ endpoint: https://api.druid.datalegend.net/datasets/rlzijdeman/ClariahTech2017/containers/clariahTech2017/sparql
+#+ tags:
+#+   - errorDetection
+#+   - xsd:date
+
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX strikes: <https://iisg.amsterdam/vocab/>
+
+SELECT distinct ?sdate
+   WHERE {
+  ?strike strikes:date ?sdate .
+  FILTER ( datatype(?sdate) = xsd:date )
+  FILTER ( coalesce(xsd:date(str(?sdate)), '!') = '!') #adapted from stackoverflow 
+}
+# At the time of writing this yields three invalid results.
+# Thanks to: https://stackoverflow.com/questions/13896118/how-to-validate-datetime-object-in-sparql-virtuoso-22007-error-dt006
